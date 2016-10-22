@@ -143,7 +143,7 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     }
     
     
-    func imageForThumbID(thumbID: String) -> UIImage? {
+    func imageForThumbID(thumbID: String, atIndex index: Int) -> UIImage? {
 
         let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
         let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
@@ -155,6 +155,36 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
             }
 
         } catch {
+            
+            
+            DispatchQueue.global().async(qos: .userInitiated) {
+                
+                WebService.sharedService.loadImage(With: thumbID) { image in
+                    if let realImage = image {
+                        
+                        let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
+                        let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
+                        
+                        let data = UIImagePNGRepresentation(realImage)
+                        do {
+                            try data?.write(to: fileImageURL)
+                        } catch {
+                            print(error)
+                        }
+                        
+                        print("Got image")
+                        
+                        //self.imageDictionary[photoItem.fileThubnailID] = realImage
+                        
+                        DispatchQueue.main.async {
+                            print(index)
+                            self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
+                        }
+                        
+                    }
+                }
+            }
+
             
         }
     
@@ -177,7 +207,7 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         
         let photoItem = collectionItems[indexPath.row]
 
-        if let photo = imageForThumbID(thumbID: photoItem.fileThubnailID) {
+        if let photo = imageForThumbID(thumbID: photoItem.fileThubnailID, atIndex: indexPath.row) {
             cell.image = photo
             cell.activityInd.stopAnimating()
 
