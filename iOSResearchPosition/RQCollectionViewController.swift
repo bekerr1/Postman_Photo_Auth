@@ -103,7 +103,6 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
 
         } catch {
             
-            
             DispatchQueue.global().async(qos: .userInitiated) {
                 
                 WebService.sharedService.loadImage(With: thumbID) { image in
@@ -133,7 +132,6 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                     }
                 }
             }
-
             
         }
     
@@ -176,7 +174,6 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RQCollectionViewCell
-        //cell.image = nil
         
         let photoItem = collectionItems[indexPath.row]
 
