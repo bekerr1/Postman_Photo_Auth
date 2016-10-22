@@ -162,10 +162,12 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                 WebService.sharedService.loadImage(With: thumbID) { image in
                     if let realImage = image {
                         
+                        let scaledImage = self.scaledImage(image: realImage)
+                        
                         let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
                         let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
                         
-                        let data = UIImagePNGRepresentation(realImage)
+                        let data = UIImagePNGRepresentation(scaledImage)
                         do {
                             try data?.write(to: fileImageURL)
                         } catch {
@@ -189,6 +191,30 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         }
     
         return nil
+    }
+    
+    
+    
+    func scaledImage(image: UIImage) -> UIImage {
+        
+        //let image = UIImage(contentsOfFile: self.URL.absoluteString!)
+        let size = image.size.applying(CGAffineTransform(scaleX: 0.10, y: 0.10))
+    
+        //let size = CGSizeApplyAffineTransform(image.size, CGAffineTransformMakeScale(0.5, 0.5))
+        let hasAlpha = false
+        let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
+    
+        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+        image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+    
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+
+        debugPrint("orig \(image.size) scaled \(scaledImage!.size)")
+
+        return scaledImage!
+        
     }
     
     
