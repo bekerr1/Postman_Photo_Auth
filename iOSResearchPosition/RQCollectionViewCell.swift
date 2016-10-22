@@ -14,7 +14,7 @@ class RQCollectionViewCell: UICollectionViewCell {
     var image: UIImage? {
         willSet(newValue) {
             cellImageView.image = newValue
-            activityInd.stopAnimating()
+            //activityInd.stopAnimating()
         }
     }
     @IBOutlet weak var activityInd: UIActivityIndicatorView!

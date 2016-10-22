@@ -84,7 +84,7 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                         self.collectionView?.reloadData()
                         if self.hasNewCollection {
                             print("hit")
-                            self.retrievePhotos()
+                            //self.retrievePhotos()
                         }
                     }
                 }
@@ -179,8 +179,11 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
 
         if let photo = imageForThumbID(thumbID: photoItem.fileThubnailID) {
             cell.image = photo
+            cell.activityInd.stopAnimating()
+
         } else {
             cell.image = nil
+            cell.activityInd.startAnimating()
         }
         
 //        if let photo = imageDictionary[photoItem.fileThubnailID] {
@@ -223,7 +226,9 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width/3 - 3, height: view.frame.width/3 - 3)
+//        return CGSize(width: view.frame.width/3 - 3, height: view.frame.width/3 - 3)
+        return CGSize(width: view.frame.width, height: view.frame.width)
+
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
