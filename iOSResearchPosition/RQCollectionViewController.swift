@@ -88,47 +88,6 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
             }
         }
     }
-
-    
-    //MARK: Photo Retrival
-    func retrievePhotos() {
-        
-        for (index, photoItem) in self.collectionItems.enumerated() {
-            
-            if let _ = imageDictionary[photoItem.fileThubnailID] {
-                self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
-                continue
-            }
-            
-            DispatchQueue.global().async(qos: .userInitiated) {
-                
-                WebService.sharedService.loadImage(With: photoItem.fileThubnailID) { image in
-                    if let realImage = image {
-
-                        let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
-                        let fileImageURL = fileImageDirURL.appendingPathComponent(photoItem.fileThubnailID + ".png")
-                        
-                        let data = UIImagePNGRepresentation(realImage)
-                        do {
-                            try data?.write(to: fileImageURL)
-                        } catch {
-                            print(error)
-                        }
-                        
-                        print("Got image")
-                        
-                        //self.imageDictionary[photoItem.fileThubnailID] = realImage
-                        
-                        DispatchQueue.main.async {
-                            print(index)
-                            self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
-                        }
-                        
-                    }
-                }
-            }
-        }
-    }
     
     
     func imageForThumbID(thumbID: String, atIndex index: Int) -> UIImage? {
