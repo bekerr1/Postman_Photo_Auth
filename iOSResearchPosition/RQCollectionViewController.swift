@@ -206,7 +206,7 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        return CGSize(width: view.frame.width/3 - 3, height: view.frame.width/3 - 3)
-        return CGSize(width: view.frame.width, height: view.frame.width)
+        return CGSize(width: view.frame.width/2, height: view.frame.width/2)
 
     }
     
@@ -220,64 +220,4 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     }
 
 }
-
-
-/*
- // MARK: - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- 
- 
- 
- 
- 
- 
- photoWorkItem = DispatchWorkItem(qos: .userInitiated, flags: []) {
- 
- for (index, photoItem) in self.collectionItems.enumerated() {
- 
- self.service?.loadImage(With: photoItem.fileThubnailID) { image in
- if let realImage = image {
- print("Got image")
- self.collectionItems[index].image = realImage
- DispatchQueue.main.async {
- print("reload collectionView")
- self.collectionView?.reloadData()
- }
- }
- }
- }
- }
- photoRetrivalQueue?.async(execute: photoWorkItem!)
- 
- 
- 
- func singleImageRetrivel() {
- service?.loadImage(With: collectionItems[0].fileThubnailID) { image in
- if let actualImage = image {
- print("got image")
- self.collectionItems[0].image = actualImage
- }
- }
- }
- 
- func simpleRetrievePhotos() {
- 
- for (index, photoItem) in collectionItems.enumerated() {
- service?.loadImage(With: photoItem.fileThubnailID) { image in
- if let actualImage = image {
- print("got image")
- self.collectionItems[index].image = actualImage
- }
- 
- }
- }
- 
- }
- 
- */
 
