@@ -113,8 +113,24 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                 
                 WebService.sharedService.loadImage(With: photoItem.fileThubnailID) { image in
                     if let realImage = image {
+                        
+
+
+                        let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
+                        let fileImageURL = fileImageDirURL.appendingPathComponent(photoItem.fileThubnailID + ".png")
+                        
+                        
+                        let data = UIImagePNGRepresentation(realImage)
+                        do {
+                            try data?.write(to: fileImageURL)
+                        } catch {
+                            print(error)
+                        }
+                        
                         print("Got image")
-                        self.imageDictionary[photoItem.fileThubnailID] = realImage
+                        
+                        //self.imageDictionary[photoItem.fileThubnailID] = realImage
+                        
                         DispatchQueue.main.async {
                             print(index)
                             self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
@@ -124,6 +140,25 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                 }
             }
         }
+    }
+    
+    
+    func imageForThumbID(thumbID: String) -> UIImage? {
+
+        let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
+        let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
+        
+        do {
+            let data = try Data(contentsOf: fileImageURL, options:[])
+            if let image = UIImage(data: data)  {
+                return image
+            }
+
+        } catch {
+            
+        }
+    
+        return nil
     }
     
     
@@ -138,13 +173,21 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RQCollectionViewCell
-        cell.image = nil
+        //cell.image = nil
         
         let photoItem = collectionItems[indexPath.row]
-        if let photo = imageDictionary[photoItem.fileThubnailID] {
+
+        if let photo = imageForThumbID(thumbID: photoItem.fileThubnailID) {
             cell.image = photo
-            return cell
+        } else {
+            cell.image = nil
         }
+        
+//        if let photo = imageDictionary[photoItem.fileThubnailID] {
+//            cell.image = photo
+//        } else {
+//            cell.image = nil
+//        }
     
         return cell
     }
@@ -189,102 +232,6 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     
     
     
-    
-    
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
-    }
-    */
-    
-    
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using [segue destinationViewController].
-     // Pass the selected object to the new view controller.
-     }
-     
-     
-     
-     
-     
-     
-     photoWorkItem = DispatchWorkItem(qos: .userInitiated, flags: []) {
-     
-     for (index, photoItem) in self.collectionItems.enumerated() {
-     
-     self.service?.loadImage(With: photoItem.fileThubnailID) { image in
-     if let realImage = image {
-     print("Got image")
-     self.collectionItems[index].image = realImage
-     DispatchQueue.main.async {
-     print("reload collectionView")
-     self.collectionView?.reloadData()
-     }
-     }
-     }
-     }
-     }
-     photoRetrivalQueue?.async(execute: photoWorkItem!)
-     
-     
-     
-     func singleImageRetrivel() {
-     service?.loadImage(With: collectionItems[0].fileThubnailID) { image in
-     if let actualImage = image {
-     print("got image")
-     self.collectionItems[0].image = actualImage
-     }
-     }
-     }
-     
-     func simpleRetrievePhotos() {
-     
-     for (index, photoItem) in collectionItems.enumerated() {
-     service?.loadImage(With: photoItem.fileThubnailID) { image in
-     if let actualImage = image {
-     print("got image")
-     self.collectionItems[index].image = actualImage
-     }
-     
-     }
-     }
-     
-     }
-
-     */
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -292,3 +239,64 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
 
 
 }
+
+
+/*
+ // MARK: - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ photoWorkItem = DispatchWorkItem(qos: .userInitiated, flags: []) {
+ 
+ for (index, photoItem) in self.collectionItems.enumerated() {
+ 
+ self.service?.loadImage(With: photoItem.fileThubnailID) { image in
+ if let realImage = image {
+ print("Got image")
+ self.collectionItems[index].image = realImage
+ DispatchQueue.main.async {
+ print("reload collectionView")
+ self.collectionView?.reloadData()
+ }
+ }
+ }
+ }
+ }
+ photoRetrivalQueue?.async(execute: photoWorkItem!)
+ 
+ 
+ 
+ func singleImageRetrivel() {
+ service?.loadImage(With: collectionItems[0].fileThubnailID) { image in
+ if let actualImage = image {
+ print("got image")
+ self.collectionItems[0].image = actualImage
+ }
+ }
+ }
+ 
+ func simpleRetrievePhotos() {
+ 
+ for (index, photoItem) in collectionItems.enumerated() {
+ service?.loadImage(With: photoItem.fileThubnailID) { image in
+ if let actualImage = image {
+ print("got image")
+ self.collectionItems[index].image = actualImage
+ }
+ 
+ }
+ }
+ 
+ }
+ 
+ */
+
