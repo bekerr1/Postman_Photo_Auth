@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		55C5A0A01DBBA0EB003B977B /* RQImageUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C5A09F1DBBA0EB003B977B /* RQImageUtility.swift */; };
 		757E9CCCCA6C6BACC2654FE8 /* Pods_iOSResearchPosition.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00BCBDDE2BBFF503646E5D0F /* Pods_iOSResearchPosition.framework */; };
 		F43665C21DB9E48100AD6E64 /* RQTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43665C11DB9E48100AD6E64 /* RQTabBarController.swift */; };
 		F43665C41DB9F2DC00AD6E64 /* RQUploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43665C31DB9F2DC00AD6E64 /* RQUploadViewController.swift */; };
@@ -45,6 +46,7 @@
 		00BCBDDE2BBFF503646E5D0F /* Pods_iOSResearchPosition.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSResearchPosition.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		31362C092A2ED8997A0800D7 /* Pods-iOSResearchPosition.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSResearchPosition.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOSResearchPosition/Pods-iOSResearchPosition.debug.xcconfig"; sourceTree = "<group>"; };
 		36D892E64B72CAE492BEF242 /* Pods-iOSResearchPosition.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSResearchPosition.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOSResearchPosition/Pods-iOSResearchPosition.release.xcconfig"; sourceTree = "<group>"; };
+		55C5A09F1DBBA0EB003B977B /* RQImageUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RQImageUtility.swift; sourceTree = "<group>"; };
 		F43665C11DB9E48100AD6E64 /* RQTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RQTabBarController.swift; sourceTree = "<group>"; };
 		F43665C31DB9F2DC00AD6E64 /* RQUploadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RQUploadViewController.swift; sourceTree = "<group>"; };
 		F486D9711DB818F60010B4EC /* iOSResearchPosition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSResearchPosition.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -148,6 +150,7 @@
 				F486D9801DB818F80010B4EC /* LaunchScreen.storyboard */,
 				F486D9831DB818F80010B4EC /* Info.plist */,
 				F486D97B1DB818F70010B4EC /* iOSResearchPosition.xcdatamodeld */,
+				55C5A09F1DBBA0EB003B977B /* RQImageUtility.swift */,
 			);
 			path = iOSResearchPosition;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				F486D97D1DB818F70010B4EC /* iOSResearchPosition.xcdatamodeld in Sources */,
 				F43665C21DB9E48100AD6E64 /* RQTabBarController.swift in Sources */,
 				F486D9751DB818F70010B4EC /* AppDelegate.swift in Sources */,
+				55C5A0A01DBBA0EB003B977B /* RQImageUtility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

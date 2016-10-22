@@ -41,125 +41,50 @@ extension Photo {
         title = ptitle
         fileThubnailID = pfilethumbID
     }
-    
 }
 
 
-class RQCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class RQCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RQImageUtilityDelegate {
     
     let cellSize: CGFloat = 100.0
-    var collectionItems: [Photo] = Array() {
-        didSet(value) {
-            pastArrayIndex = collectionItems.count
-        }
-    }
-    
-    var pastArrayIndex: Int = 0
+    var collectionItems: [Photo] = Array()
     var imageDictionary: [String:UIImage] = Dictionary<String,UIImage>()
-    var hasNewCollection: Bool = false
+    
     var service: WebService?
+    var imageUtility: RQImageUtility?
 
+    /*
+     pastArrayIndex and hasNewCollection were checking to determine whether a new list is
+     provided.  simply checking count is not enough, a new list coulbe retrieved with the same count 
+     as the previous.  Plus the vars were used to determine whether to retrieve or not - this
+     has since been eliminated to only retrieve when needed
+    */
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        //Load PhotoList on viewDidLoad
+        imageUtility = RQImageUtility()
+        imageUtility?.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         WebService.sharedService.loadPhotoList { list in
-            if let validPhotoList = list {
-                if self.pastArrayIndex == validPhotoList.count {
-                    //No new photos
-                    self.hasNewCollection = false
-                } else {
-                    self.collectionItems = validPhotoList
-                    DispatchQueue.main.async {
-                        self.hasNewCollection = true
-                        self.collectionView?.reloadData()
-                        if self.hasNewCollection {
-                            print("hit")
-                            //self.retrievePhotos()
-                        }
-                    }
+            if let list = list {
+                self.collectionItems = list
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
                 }
-                
             }
         }
     }
     
     
-    func imageForThumbID(thumbID: String, atIndex index: Int) -> UIImage? {
-
-        let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
-        let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
-        
-        do {
-            let data = try Data(contentsOf: fileImageURL, options:[])
-            if let image = UIImage(data: data)  {
-                return image
-            }
-
-        } catch {
-            
-            DispatchQueue.global().async(qos: .userInitiated) {
-                
-                WebService.sharedService.loadImage(With: thumbID) { image in
-                    if let realImage = image {
-                        
-                        let scaledImage = self.scaledImage(image: realImage)
-                        
-                        let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
-                        let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
-                        
-                        let data = UIImagePNGRepresentation(scaledImage)
-                        do {
-                            try data?.write(to: fileImageURL)
-                        } catch {
-                            print(error)
-                        }
-                        
-                        print("Got image")
-                        
-                        //self.imageDictionary[photoItem.fileThubnailID] = realImage
-                        
-                        DispatchQueue.main.async {
-                            print(index)
-                            self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
-                        }
-                        
-                    }
-                }
-            }
-            
+    func updateItem(at index:Int) {
+        DispatchQueue.main.async {
+            print(index)
+            self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
-    
-        return nil
-    }
-    
-    
-    
-    func scaledImage(image: UIImage) -> UIImage {
-        
-        //let image = UIImage(contentsOfFile: self.URL.absoluteString!)
-        let size = image.size.applying(CGAffineTransform(scaleX: 0.10, y: 0.10))
-    
-        //let size = CGSizeApplyAffineTransform(image.size, CGAffineTransformMakeScale(0.5, 0.5))
-        let hasAlpha = false
-        let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
-    
-        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        image.draw(in: CGRect(origin: CGPoint.zero, size: size))
-    
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-
-        debugPrint("orig \(image.size) scaled \(scaledImage!.size)")
-
-        return scaledImage!
-        
     }
     
     
@@ -177,7 +102,7 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         
         let photoItem = collectionItems[indexPath.row]
 
-        if let photo = imageForThumbID(thumbID: photoItem.fileThubnailID, atIndex: indexPath.row) {
+        if let photo = imageUtility?.imageForThumbID(thumbID: photoItem.fileThubnailID, atIndex: indexPath.row) {
             cell.image = photo
             cell.activityInd.stopAnimating()
 
@@ -194,8 +119,6 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         return UIEdgeInsets(top: 5, left: 2, bottom: 5, right: 2)
     }
     
-    
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 2.0
     }
@@ -206,7 +129,8 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        return CGSize(width: view.frame.width/3 - 3, height: view.frame.width/3 - 3)
-        return CGSize(width: view.frame.width/2, height: view.frame.width/2)
+//        return CGSize(width: view.frame.width/2, height: view.frame.width/2)
+        return CGSize(width: view.frame.width/1.2, height: view.frame.width/1.2)
 
     }
     
@@ -220,4 +144,123 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
     }
 
 }
+
+
+
+
+
+//    func createIfNeededDownloadDirectory() {
+//
+//        let baseURL = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0])
+//        let imagesDirURL = baseURL.appendingPathComponent("images")!
+//
+//        let fileManager = FileManager.default
+//        // Create the resources directory if needed
+//
+//        var directory: ObjCBool = false
+//        let exists = fileManager.fileExists(atPath: imagesDirURL.path, isDirectory: &directory)
+//        if exists && directory.boolValue {
+//            // Exists. Directory.
+//        } else if exists {
+//            // Exists.
+//        }
+//
+//        if !exists {
+//            do {
+//                try fileManager.createDirectory(at: imagesDirURL, withIntermediateDirectories: true, attributes: [:])
+//            } catch {
+//                print(error)
+//            }
+//        }
+//    }
+
+
+
+//    func imageForThumbID(thumbID: String, atIndex index: Int) -> UIImage? {
+//
+//        var needToRetrieve = false
+//
+//        if let image = imageCache?.object(forKey: thumbID as AnyObject) as? UIImage {
+//            debugPrint("image from cache")
+//            return image
+//        } else {
+//            let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
+//            let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
+//
+//            do {
+//                let data = try Data(contentsOf: fileImageURL, options:[])
+//                if let image = UIImage(data: data)  {
+//                    self.imageCache?.setObject(image as AnyObject, forKey: thumbID as AnyObject)
+//                    debugPrint("image from disk")
+//                    return image
+//                }
+//
+//            } catch {
+//                needToRetrieve = true
+//            }
+//        }
+//
+//        if needToRetrieve {
+//
+//            DispatchQueue.global().async() {
+//                WebService.sharedService.loadImage(With: thumbID) { image in
+//                    debugPrint("image from server")
+//                    if let realImage = image {
+//                        let scaledImage = self.scaledImage(image: realImage)
+//
+//                        self.imageCache?.setObject(scaledImage as AnyObject, forKey: thumbID as AnyObject)
+//                        let data = UIImagePNGRepresentation(scaledImage)
+//                        do {
+//                            let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
+//                            let fileImageURL = fileImageDirURL.appendingPathComponent(thumbID + ".png")
+//
+//                            try data?.write(to: fileImageURL)
+//                        } catch {
+//                            print(error)
+//                        }
+//
+//                        DispatchQueue.main.async {
+//                            print(index)
+//                            self.collectionView?.reloadItems(at: [IndexPath(row: index, section: 0)])
+//                        }
+//
+//                    } else {
+//
+//                        // SHOULD delete the image on disk if truly the image is not available on the server
+//                        // but not when there was an error on the retrieval call
+//                        // Will need to add some sort of status on the WebService completion
+//                        // image data, success = true  (success call has image)
+//                        // image nil,  success = true  (success call no image) probably deleted
+//                        // image data, success = false (should not happen)
+//                        // image nil,  success = false (failed call)
+//                    }
+//                }
+//            }
+//        }
+//
+//        return nil
+//    }
+
+
+//    func scaledImage(image: UIImage) -> UIImage {
+//
+//        //let image = UIImage(contentsOfFile: self.URL.absoluteString!)
+//        let size = image.size.applying(CGAffineTransform(scaleX: 0.10, y: 0.10))
+//
+//        //let size = CGSizeApplyAffineTransform(image.size, CGAffineTransformMakeScale(0.5, 0.5))
+//        let hasAlpha = false
+//        let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
+//
+//        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+//        image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+//
+//        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+//
+//        debugPrint("orig \(image.size) scaled \(scaledImage!.size)")
+//
+//        return scaledImage!
+//    }
+
+
 
