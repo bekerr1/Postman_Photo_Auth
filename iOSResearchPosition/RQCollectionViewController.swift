@@ -45,10 +45,6 @@ extension Photo {
 }
 
 
-
-
-
-
 class RQCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     let cellSize: CGFloat = 100.0
@@ -91,13 +87,8 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                 
             }
         }
-
-        
-        
-        
     }
 
-   
     
     //MARK: Photo Retrival
     func retrievePhotos() {
@@ -113,12 +104,9 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
                 
                 WebService.sharedService.loadImage(With: photoItem.fileThubnailID) { image in
                     if let realImage = image {
-                        
-
 
                         let fileImageDirURL = URL(fileURLWithPath:NSTemporaryDirectory())
                         let fileImageURL = fileImageDirURL.appendingPathComponent(photoItem.fileThubnailID + ".png")
-                        
                         
                         let data = UIImagePNGRepresentation(realImage)
                         do {
@@ -242,29 +230,8 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
             cell.activityInd.startAnimating()
         }
         
-//        if let photo = imageDictionary[photoItem.fileThubnailID] {
-//            cell.image = photo
-//        } else {
-//            cell.image = nil
-//        }
-    
         return cell
     }
-    
-    /*
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        //
-        
-        if kind == UICollectionElementKindSectionHeader {
-            print("Theres a header")
-        } else if kind == UICollectionElementKindSectionFooter {
-            print("Theres a footer")
-        }
-        
-        
-    }
-    */
-    
     
     //MARK: Layout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -291,13 +258,10 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         return CGSize(width: view.frame.width, height: 30)
     }
     
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
 
 }
 

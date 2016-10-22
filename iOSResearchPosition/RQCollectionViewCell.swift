@@ -14,11 +14,9 @@ class RQCollectionViewCell: UICollectionViewCell {
     var image: UIImage? {
         willSet(newValue) {
             cellImageView.image = newValue
-            //activityInd.stopAnimating()
         }
     }
     @IBOutlet weak var activityInd: UIActivityIndicatorView!
-    
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -29,8 +27,6 @@ class RQCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         print("cellViewInit")
-        
-        
         backgroundColor = UIColor.gray
     }
     
