@@ -71,6 +71,8 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         
         WebService.sharedService.loadPhotoList { list in
             if let list = list {
+                self.imageUtility?.cleanImagesDirectory()
+                
                 self.collectionItems = list
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
@@ -79,6 +81,7 @@ class RQCollectionViewController: UICollectionViewController, UICollectionViewDe
         }
     }
     
+    // MARK: -
     
     func updateItem(at index:Int) {
         DispatchQueue.main.async {

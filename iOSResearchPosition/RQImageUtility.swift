@@ -35,20 +35,21 @@ class RQImageUtility {
         if let image = imageCache?.object(forKey: thumbID as AnyObject) as? UIImage {
             debugPrint("image from cache")
             return image
+            
         } else {
             if let fileImageURL = imagesDirURL?.appendingPathComponent(thumbID + ".png") {
-            
-            do {
-                let data = try Data(contentsOf: fileImageURL, options:[])
-                if let image = UIImage(data: data)  {
-                    self.imageCache?.setObject(image as AnyObject, forKey: thumbID as AnyObject)
-                    debugPrint("image from disk")
-                    return image
-                }
                 
-            } catch {
-                needToRetrieve = true
-            }
+                do {
+                    let data = try Data(contentsOf: fileImageURL, options:[])
+                    if let image = UIImage(data: data)  {
+                        self.imageCache?.setObject(image as AnyObject, forKey: thumbID as AnyObject)
+                        debugPrint("image from disk")
+                        return image
+                    }
+                    
+                } catch {
+                    needToRetrieve = true
+                }
             }
         }
         
@@ -120,11 +121,10 @@ class RQImageUtility {
     private func createIfNeededDownloadDirectory() {
         
         let baseURL = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0])
-        let imagesDirURL = baseURL.appendingPathComponent("images")!
+        let imagesDirURL = baseURL.appendingPathComponent("Images")!
         
         let fileManager = FileManager.default
-        // Create the resources directory if needed
-        
+        // Create the  directory if needed
         var directory: ObjCBool = false
         let exists = fileManager.fileExists(atPath: imagesDirURL.path, isDirectory: &directory)
         if exists && directory.boolValue {
@@ -142,4 +142,26 @@ class RQImageUtility {
         }
     }
 
+    
+    
+    func cleanImagesDirectory() {
+        let fileManager = FileManager.default
+        if let enumerator = fileManager.enumerator(atPath: imagesDirURL!.path) {
+            while let element = enumerator.nextObject() as? String {
+                if let removeURL = imagesDirURL?.appendingPathComponent(element) {
+                    do {
+                        try fileManager.removeItem(at: removeURL)
+                    } catch {
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    
+    
+    
+    
+    
 }
